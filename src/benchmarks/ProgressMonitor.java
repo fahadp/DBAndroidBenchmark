@@ -1,4 +1,4 @@
-package org.garret.bench;
+package benchmarks;
 
 import android.widget.*;
 import android.os.Handler;

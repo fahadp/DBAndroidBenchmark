@@ -1,10 +1,12 @@
-package org.garret.bench;
+package benchmarks;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.*;
 import android.view.*;
 import java.io.*;
+
+import org.garret.bench.R;
 
 public class Benchmark extends Activity {
     

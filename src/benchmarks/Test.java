@@ -1,4 +1,4 @@
-package org.garret.bench;
+package benchmarks;
 
 public abstract class Test implements Runnable {
 	boolean completed;
