@@ -14,7 +14,7 @@ public class PeopleRow {
 	public static int people = 0;
 	
 	public PeopleRow() {
-		this(-1,FieldGenerator.randomName(), FieldGenerator.randomAge(),FieldGenerator.randomGender(),FieldGenerator.randomColor());
+		this(PeopleRow.people,FieldGenerator.randomName(), FieldGenerator.randomAge(),FieldGenerator.randomGender(),FieldGenerator.randomColor());
 	}
 	
 	public PeopleRow(int id) {
@@ -22,7 +22,7 @@ public class PeopleRow {
 	}
 		
 	public PeopleRow(String name,int age,String gender,String color) {
-		this(-1,name,age,gender,color);
+		this(PeopleRow.people,name,age,gender,color);
 	}
 
 	public PeopleRow(int id,String name,int age,String gender,String color) {

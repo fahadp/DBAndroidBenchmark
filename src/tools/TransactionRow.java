@@ -11,8 +11,10 @@ public class TransactionRow {
 	public final int seller;
 	public final String date;
 	
+	public static int transactions = 0;
+	
 	public TransactionRow() {
-		this(-1,FieldGenerator.randomPrice(),FieldGenerator.randomItem(),FieldGenerator.randomDate());
+		this(TransactionRow.transactions,FieldGenerator.randomPrice(),FieldGenerator.randomItem(),FieldGenerator.randomDate());
 	}
 	
 	public TransactionRow(int transactionID) {
@@ -20,7 +22,7 @@ public class TransactionRow {
 	}
 	
 	public TransactionRow(float price,String item, String date) {
-		this(-1,price,item,date);
+		this(TransactionRow.transactions,price,item,date);
 	}
 	
 	public TransactionRow(int transactionID, float price,String item, String date) {
@@ -30,6 +32,7 @@ public class TransactionRow {
 		this.buyer = PeopleRow.randomPerson();
 		this.seller = PeopleRow.randomPerson();
 		this.date = date;
+		TransactionRow.transactions++;
 	}
 	
 }
