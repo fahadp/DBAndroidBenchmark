@@ -94,4 +94,6 @@ public class XSRandom extends Random {
 		x &= ((1L << nbits) - 1);
 		return (int) x;
 	}
+	
+	public static Random xsr = new XSRandom();
 }
