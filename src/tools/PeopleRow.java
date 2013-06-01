@@ -31,7 +31,7 @@ public class PeopleRow {
 		this.age = age;
 		this.gender = gender;
 		this.color = color;
-		this.people++;
+		PeopleRow.people++;
 	}
 	
 	public static int randomPerson() {

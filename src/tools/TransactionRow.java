@@ -4,7 +4,7 @@ public class TransactionRow {
 
 	//int transactionID, float price,String item,int buyer,int seller, String date
 	
-	public final int transactionID;
+	public final int id;
 	public final float price;
 	public final String item;
 	public final int buyer;
@@ -25,8 +25,8 @@ public class TransactionRow {
 		this(TransactionRow.transactions,price,item,date);
 	}
 	
-	public TransactionRow(int transactionID, float price,String item, String date) {
-		this.transactionID = transactionID ;
+	public TransactionRow(int id, float price,String item, String date) {
+		this.id = id ;
 		this.price = price;
 		this.item = item;
 		this.buyer = PeopleRow.randomPerson();

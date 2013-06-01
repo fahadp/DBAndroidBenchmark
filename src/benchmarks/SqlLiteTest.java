@@ -8,12 +8,14 @@ import android.database.*;
 public class SqlLiteTest extends Test {
 	final static int nRecords = Benchmark.TEST_ITERATIONS;
 	final static int pagePoolSize = 2 * 1024 * 1024;
+	
+	private final static String DB_NAME = "sqlite.db";
     
 	String databaseName;
     PrintStream out;
     
     SqlLiteTest(String databaseName, PrintStream out) {
-    	this.databaseName = databaseName;
+    	this.databaseName = databaseName+DB_NAME;
     	this.out = out;
     }
 

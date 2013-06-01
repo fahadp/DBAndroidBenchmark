@@ -16,6 +16,8 @@ public class Benchmark extends Activity {
     static final private int SQLITE_ID = Menu.FIRST + 1;
     static final private int DB4O_ID = Menu.FIRST + 2;
     
+    static final private String  APP_DIRECTORY = "/mnt/sdcard/dbBenchmarks/";
+    
     TextView tv;
     
     /**
@@ -49,7 +51,7 @@ public class Benchmark extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        String databasePath = "testindex.dbs";
+        String databasePath = Benchmark.APP_DIRECTORY;
         try { 
             // It is necessary to create file using Activity.openFileOutput method otherwise
             // java.io.RandomAccessFile will not able to open it (even in write mode). It seems to be a bug
