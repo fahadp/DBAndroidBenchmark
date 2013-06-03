@@ -34,5 +34,12 @@ public class TransactionRow {
 		this.date = date;
 		TransactionRow.transactions++;
 	}
+	/**
+	 * insert into transactions (id,seller,buyer,price,item,date) values (?,?,?,?,?,?)
+	 * @return
+	 */
+	public String[] bindArgs(){
+		return new String[] {Integer.valueOf(this.id).toString(),Integer.valueOf(this.seller).toString(),Integer.valueOf(this.buyer).toString(),Float.valueOf(this.price).toString(),this.item,this.date};
+	}
 	
 }

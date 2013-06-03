@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package org.garret.bench;
+package edu.cs.washington;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

@@ -2,7 +2,15 @@ package benchmarks;
 
 import tools.*;
 
-public abstract class DBbenchmark {
+public abstract class DBTestInterface {
+	
+	private static final int NUM_PEOPLE = 200;
+	private static final int NUM_TRANSACTIONS = 300;
+
+	// create the database with default or input file
+	public abstract void create();
+	public abstract void create(String file);
+	
 	
 	//Database Set Up Functions
 	/**
@@ -55,6 +63,20 @@ public abstract class DBbenchmark {
 	}
 	
 	/**
+	 * Insert the given number of people and transactions
+	 * @param people
+	 * @param transactions
+	 */
+	public void insertAll(int people, int transactions) {
+		for(int i=0; i<people; i++) this.insertPeopleRecord(new PeopleRow());
+		for(int i=0; i<transactions; i++) this.insertTransactionRecord(new TransactionRow());
+	}
+	
+	public void insert() {
+		this.insertAll(DBTestInterface.NUM_PEOPLE, DBTestInterface.NUM_TRANSACTIONS);
+	}
+	
+	/**
 	 * Abstract transaction record insert from transaction row
 	 */
 	public abstract void insertTransactionRecord(TransactionRow row);
@@ -62,27 +84,29 @@ public abstract class DBbenchmark {
 	/**
 	DELETE * FROM people WHERE id=?
 	**/
-	public abstract void deletePeopleRecord(int id);
+	public abstract boolean deletePeopleRecord(int id);
 	
 	/**
 	DELETE * FROM transaction WHERE transactionid=?
 	**/
-	public abstract void deleteTransactionRecord(int id);
+	public abstract boolean deleteTransactionRecord(int id);
 	
 	
 	/**
 	 * Select Test 1: look up by primary key.
 	 * 
 	SELECT * FROM people WHERE id=?
+	* @return number of rows selected
 	**/
-	public abstract void selectTest1(int id);
+	public abstract int selectTest1(int id);
 	
 	/**
 	 * Select Test 2: look up by non primary key.
 	 * 
 	SELECT * FROM people WHERE name=?
+	* @return number of rows selected
 	**/
-	public abstract void selectTest2(String name);
+	public abstract int selectTest2(String name);
 	
 	
 	/**
@@ -90,26 +114,29 @@ public abstract class DBbenchmark {
 	 * 
 	SELECT * FROM people WHERE ?<age AND age>?
 	**/
-	public abstract void selectTest3(int startAge,int endAge);
+	public abstract int selectTest3(int startAge,int endAge);
 	
 	/**
 	 * Select Test 4: group by
 	 * 
 	SELECT age,count(*) FROM people GROUP BY age
+	* @return number of rows selected
 	**/
-	public abstract void selectTest4();
+	public abstract int selectTest4();
 	
 	/**
-	 * Select Test 5: group by, aggragate and filter
+	 * Select Test 5: group by, aggragate
 	 * 
-	SELECT buyer,sum(price) FROM people WHERE datetime=? GROUP BY transactionid,buyer
+	SELECT buyer,sum(price) FROM people GROUP BY transactionid,buyer
+	* @return number of rows selected
 	**/
-	public abstract void selectTest5(String date);
+	public abstract int selectTest5();
 	
 	/**
 	 * Select Test 6: basic join
 	 * 
 	SELECT p.name,p.age,t.transactionid FROM people p,transaction t WHERE p.id=t.buyer AND p.age>?
+	* @return number of rows selected
 	**/
-	public abstract void selectTest6(int age);
+	public abstract int selectTest6(int age);
 }

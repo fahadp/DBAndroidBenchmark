@@ -34,8 +34,26 @@ public class PeopleRow {
 		PeopleRow.people++;
 	}
 	
+	/**
+	 * Return an array of arguments as strings
+	 * @return String[] {id,name,age,gender,color}
+	 */
+	public String[] bindArgs() {
+		return new String[]  {Integer.valueOf(this.id).toString(),this.name,Integer.valueOf(this.age).toString(),this.gender,this.color};
+	}
+	
+	/**
+	 * insert into people (id,name,age,gender,color) values (?,?,?,?,?)
+	 * @return
+	 */
 	public static int randomPerson() {
 		return XSRandom.xsr.nextInt(PeopleRow.people);
+	}
+	
+	public String toString() {
+		String out = "("+id+") ";
+		out += name +" "+age;
+		return out;
 	}
 	
 }
