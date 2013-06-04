@@ -14,7 +14,7 @@ public class PeopleRow {
 	public static int people = 0;
 	
 	public PeopleRow() {
-		this(-1,FieldGenerator.randomName(), FieldGenerator.randomAge(),FieldGenerator.randomGender(),FieldGenerator.randomColor());
+		this(PeopleRow.people,FieldGenerator.randomName(), FieldGenerator.randomAge(),FieldGenerator.randomGender(),FieldGenerator.randomColor());
 	}
 	
 	public PeopleRow(int id) {
@@ -22,7 +22,7 @@ public class PeopleRow {
 	}
 		
 	public PeopleRow(String name,int age,String gender,String color) {
-		this(-1,name,age,gender,color);
+		this(PeopleRow.people,name,age,gender,color);
 	}
 
 	public PeopleRow(int id,String name,int age,String gender,String color) {
@@ -31,11 +31,29 @@ public class PeopleRow {
 		this.age = age;
 		this.gender = gender;
 		this.color = color;
-		this.people++;
+		PeopleRow.people++;
 	}
 	
+	/**
+	 * Return an array of arguments as strings
+	 * @return String[] {id,name,age,gender,color}
+	 */
+	public String[] bindArgs() {
+		return new String[]  {Integer.valueOf(this.id).toString(),this.name,Integer.valueOf(this.age).toString(),this.gender,this.color};
+	}
+	
+	/**
+	 * insert into people (id,name,age,gender,color) values (?,?,?,?,?)
+	 * @return
+	 */
 	public static int randomPerson() {
 		return XSRandom.xsr.nextInt(PeopleRow.people);
+	}
+	
+	public String toString() {
+		String out = "("+id+") ";
+		out += name +" "+age;
+		return out;
 	}
 	
 }
