@@ -16,17 +16,22 @@ import tools.TaskMessage;
 
 public class TestHarness implements Runnable {
 
-	public static final String DONE = "DONE";
+	
 	private DBTestInterface db;
 	private ArrayBlockingQueue<TaskMessage> queue;
-	private long start;
-	private long delta;
+	private long start = 0;
+	private long delta = 0;	
+	private BufferedWriter logbw;
+	
+	// config variablies to change 
+	public boolean doCreate = true;
+	public boolean[] doSelect = {false,true,true,true,true,true,true};
 	
 	private final String LTAG = "HARNESS";
-	private BufferedWriter logbw;	
 	
 	public static final int NUM_PEOPLE = 1000;
 	public static final int NUM_TRANSACTIONS = NUM_PEOPLE*3;
+	public static final String DONE = "DONE";
 	
 	public TestHarness(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue ) {
 		
@@ -45,47 +50,20 @@ public class TestHarness implements Runnable {
 		
 	}
 	
-	private void startTimer() {
-		this.start = System.currentTimeMillis();
-	}
-	
-	private long endTimer() {
-		this.delta = (System.currentTimeMillis() - start);
-		return this.delta;
-	}
-	
-	private void log(String task,String message) {
-		TaskMessage t = new TaskMessage(task,this.delta,message);
-		try {
-			this.queue.put(t);
-			this.logbw.write(t.toString()+"\n");
-		} 
-		catch(InterruptedException e) {} 
-		catch (IOException e) {}
-	}
-	
 	@Override
 	public void run() {
 		
-		if(false) {// toggle create/insert 
+		if(this.doCreate) {// toggle create/insert 
 			this.create();
 			this.insert();
 		}
 		else
 			this.db.open();
 		
-		this.select1();
-		
-		this.select2();
-		
-		this.select3();
-		
-		this.select4();
-		
-		this.select5();
-		
-		this.select6();
-		
+		//run select tests 1-6
+		for(int i=1; i<=6; i++) 
+			if(this.doSelect[i])
+				this.select(i);
 		//DONE
 		this.delta = 0;
 		this.log(TestHarness.DONE,"Finished");
@@ -118,6 +96,17 @@ public class TestHarness implements Runnable {
 		this.db.insertAll(TestHarness.NUM_PEOPLE,TestHarness.NUM_TRANSACTIONS);
 		this.endTimer();
 		this.log("Insert",String.format("Inserted %d People and %d Transactions", TestHarness.NUM_PEOPLE,TestHarness.NUM_TRANSACTIONS));
+	}
+	
+	public void select(int i) {
+		switch(i) {
+		case 1: this.select1(); break;
+		case 2: this.select2(); break;
+		case 3: this.select3(); break;
+		case 4: this.select4(); break;
+		case 5: this.select5(); break;
+		case 6: this.select6(); break;
+		}
 	}
 	
 	/**
@@ -208,6 +197,25 @@ public class TestHarness implements Runnable {
 		}
 		this.endTimer();
 		this.log("Select Test 6",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+	}
+	
+	private void startTimer() {
+		this.start = System.currentTimeMillis();
+	}
+	
+	private long endTimer() {
+		this.delta = (System.currentTimeMillis() - start);
+		return this.delta;
+	}
+	
+	private void log(String task,String message) {
+		TaskMessage t = new TaskMessage(task,this.delta,message);
+		try {
+			this.queue.put(t);
+			this.logbw.write(t.toString()+"\n");
+		} 
+		catch(InterruptedException e) {} 
+		catch (IOException e) {}
 	}
 
 }
