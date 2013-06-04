@@ -4,15 +4,17 @@ public class TransactionRow {
 
 	//int transactionID, float price,String item,int buyer,int seller, String date
 	
-	public final int transactionID;
+	public final int id;
 	public final float price;
 	public final String item;
 	public final int buyer;
 	public final int seller;
 	public final String date;
 	
+	public static int transactions = 0;
+	
 	public TransactionRow() {
-		this(-1,FieldGenerator.randomPrice(),FieldGenerator.randomItem(),FieldGenerator.randomDate());
+		this(TransactionRow.transactions,FieldGenerator.randomPrice(),FieldGenerator.randomItem(),FieldGenerator.randomDate());
 	}
 	
 	public TransactionRow(int transactionID) {
@@ -20,16 +22,24 @@ public class TransactionRow {
 	}
 	
 	public TransactionRow(float price,String item, String date) {
-		this(-1,price,item,date);
+		this(TransactionRow.transactions,price,item,date);
 	}
 	
-	public TransactionRow(int transactionID, float price,String item, String date) {
-		this.transactionID = transactionID ;
+	public TransactionRow(int id, float price,String item, String date) {
+		this.id = id ;
 		this.price = price;
 		this.item = item;
 		this.buyer = PeopleRow.randomPerson();
 		this.seller = PeopleRow.randomPerson();
 		this.date = date;
+		TransactionRow.transactions++;
+	}
+	/**
+	 * insert into transactions (id,seller,buyer,price,item,date) values (?,?,?,?,?,?)
+	 * @return
+	 */
+	public String[] bindArgs(){
+		return new String[] {Integer.valueOf(this.id).toString(),Integer.valueOf(this.seller).toString(),Integer.valueOf(this.buyer).toString(),Float.valueOf(this.price).toString(),this.item,this.date};
 	}
 	
 }
