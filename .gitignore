@@ -1,0 +1,15 @@
+*.log
+
+# built application files
+*.apk
+*.ap_
+
+
+# Java class files
+*.class
+
+# generated files
+/bin/
+/gen/
+/.settings/
+
