@@ -4,9 +4,10 @@ import tools.*;
 
 public abstract class DBTestInterface {
 	
-	private static final int NUM_PEOPLE = 200;
-	private static final int NUM_TRANSACTIONS = 300;
-
+	//open database existing database
+	public abstract boolean open();
+	public abstract boolean open(String file);
+	
 	// create the database with default or input file
 	public abstract void create();
 	public abstract void create(String file);
@@ -26,8 +27,7 @@ public abstract class DBTestInterface {
 	public abstract void reset();
 	
 	/**
-	 * DROP TABLE people;
-	 * DROP TABLE transaction;
+	 * Delete database file associated with DB
 	 */
 	public abstract void delete();
 	
@@ -70,10 +70,6 @@ public abstract class DBTestInterface {
 	public void insertAll(int people, int transactions) {
 		for(int i=0; i<people; i++) this.insertPeopleRecord(new PeopleRow());
 		for(int i=0; i<transactions; i++) this.insertTransactionRecord(new TransactionRow());
-	}
-	
-	public void insert() {
-		this.insertAll(DBTestInterface.NUM_PEOPLE, DBTestInterface.NUM_TRANSACTIONS);
 	}
 	
 	/**
@@ -135,8 +131,15 @@ public abstract class DBTestInterface {
 	/**
 	 * Select Test 6: basic join
 	 * 
-	SELECT p.name,p.age,t.transactionid FROM people p,transaction t WHERE p.id=t.buyer AND p.age>?
+	SELECT p.name,p.age,t.transactionid FROM people p,transaction t WHERE p.id=t.buyer AND p.age>=?
 	* @return number of rows selected
 	**/
 	public abstract int selectTest6(int age);
+	
+	/**
+	 * 
+	 * @return The name of this DB Test
+	 */
+	public abstract String getName();
+	
 }

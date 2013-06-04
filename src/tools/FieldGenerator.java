@@ -1,6 +1,7 @@
 package tools;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Random;
 
 public class FieldGenerator {
@@ -12,6 +13,10 @@ public class FieldGenerator {
 	//age
 	private static final int MIN_AGE = 18;
 	private static final int MAX_AGE = 99;
+	
+	//date formats
+	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	public final static SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	
 	
 	// 1000 m (http://names.mongabay.com/)ost common first and last names
@@ -54,6 +59,7 @@ public class FieldGenerator {
 	
 	//return a random date between 1/1/2000 and 1/1/2015
 	public static String randomDate() {
-		return new Timestamp(946713600000L + (long)(XSRandom.xsr.nextDouble() * 473385600001L)).toGMTString();
+		return FieldGenerator.DATE_FORMAT.format(new Timestamp(946713600000L + (long)(XSRandom.xsr.nextDouble() * 473385600001L)));
 	}
+	
 }

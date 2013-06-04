@@ -1,5 +1,7 @@
 package tools;
 
+import java.text.SimpleDateFormat;
+
 public class TransactionRow {
 
 	//int transactionID, float price,String item,int buyer,int seller, String date
@@ -12,6 +14,7 @@ public class TransactionRow {
 	public final String date;
 	
 	public static int transactions = 0;
+
 	
 	public TransactionRow() {
 		this(TransactionRow.transactions,FieldGenerator.randomPrice(),FieldGenerator.randomItem(),FieldGenerator.randomDate());

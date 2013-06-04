@@ -7,6 +7,9 @@ import android.widget.*;
 import android.util.Log;
 import android.view.*;
 import java.io.*;
+import java.util.concurrent.ArrayBlockingQueue;
+
+import tools.TaskMessage;
 
 import edu.cs.washington.R;
 
@@ -63,24 +66,13 @@ public class Benchmark extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        /*
-        String databasePath = Benchmark.APP_DIR;
-        try { 
-            // It is necessary to create file using Activity.openFileOutput method otherwise
-            // java.io.RandomAccessFile will not able to open it (even in write mode). It seems to be a bug
-            // which I expect to be fixed in next release of Android, but right now this two lines fix
-            // this problem.
-            this.openFileOutput(databasePath, 0).close();
-            databasePath = getFileStreamPath(databasePath).getAbsolutePath();
-            //new File(databasePath).delete();
-        } catch (IOException x) {} */
+        DBTestInterface db = new SQLiteTest();
+       
+        ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
+        this.tv.setText(String.format("Starting %s test....\n",db.getName()));
+        new Thread(new TestHarness(db,queue)).start();
+        new Thread(new DisplayMonitor(queue,this.tv)).start();
         
-        DBTestInterface test = new SQLiteTest();
-        test.create();
-        Log.i("MAIN","Done!");
-        test.insert();
-        Log.i("MAIN","Insert Done!");
         /*
         PrintStream ps = new PrintStream(out);
         Test test;
