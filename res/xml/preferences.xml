@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory 
+        android:title="Benchmark Settings"
+        android:key="first_category">
+        
+        <CheckBoxPreference 
+            android:key="create_tables"
+            android:summary="Create and insert new data every run"
+            android:title="Create/Insert" 
+            android:defaultValue="true"
+        />   
+            
+    </PreferenceCategory>
+    
+</PreferenceScreen>

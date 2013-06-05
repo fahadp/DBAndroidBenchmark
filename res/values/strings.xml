@@ -2,11 +2,13 @@
 <resources>
     <string name="hello">Hello World, Benchmarking</string>
     <string name="app_name">Benchmark</string>
-<string name="perst">Perst</string>
-<string name="sqlite">SQLite</string>
-<string name="db4o">db4o</string>
     
-
+    
+    <string name="dball">All</string>
+	<string name="couchlite">CouchLite</string>
+	<string name="sqlite">SQLite</string>
+	<string name="db4o">db4o</string>
+	<string name="settings">Settings</string>
 
 
 

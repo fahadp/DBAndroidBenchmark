@@ -15,7 +15,7 @@ class RecordDb4o {
 };
 
 
-public class Db4oTest extends Test { 
+public class Db4oTest { 
     final static int nRecords = Benchmark.TEST_ITERATIONS;
     
     String databaseName;
@@ -82,13 +82,14 @@ public class Db4oTest extends Test {
         long key = 1999;
         int i;   
         // Insert data in the database
+       /*
         for (i = 0; i < nRecords; i++) { 
             Record rec = new Record();
             key = (3141592621L*key + 2718281829L) % 1000000007L;
             rec.intKey = key;
             rec.strKey = Long.toString(key);
             oc.store(rec);
-        }
+        }*/
         oc.commit(); // Commit current transaction
         out.println("Elapsed time for inserting " + nRecords + " records: " 
                            + (System.currentTimeMillis() - start) + " milliseconds");
@@ -150,6 +151,5 @@ public class Db4oTest extends Test {
         oc.close();
         out.flush();
         // Notify about test completion
-        done();
     }
 }

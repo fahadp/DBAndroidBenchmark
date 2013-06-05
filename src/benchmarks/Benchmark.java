@@ -1,8 +1,11 @@
 package benchmarks;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.widget.*;
 import android.util.Log;
 import android.view.*;
@@ -17,15 +20,39 @@ public class Benchmark extends Activity {
     
     static final public int TEST_ITERATIONS = 10000;
     static final public int PROGRESS_NOTIFICATION = 1000; // in milliseconds
-    static final private int PERST_ID = Menu.FIRST;
-    static final private int SQLITE_ID = Menu.FIRST + 1;
-    static final private int DB4O_ID = Menu.FIRST + 2;
+    
+    
+    static final private int M_COUCH_ID = Menu.FIRST;
+    static final private int M_SQLITE_ID = Menu.FIRST + 1;
+    static final private int M_DB4O_ID = Menu.FIRST + 2;
+    static final private int M_DB_ALL = Menu.FIRST+3;
+    static final private int M_SETTINGS = Menu.FIRST+4;
     
     //SD Card storage location
     private static final String  SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String APP_DIR = SDCARD+"/Android/data/benchmakrs.cs/";
     
-    TextView tv;
+    private TextView tv;
+    private SharedPreferences sharedPrefs;
+    
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        tv = new TextView(this);
+        tv.setText(R.string.about);
+        setContentView(tv);
+        this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        
+        //Make sure the path to APP_DIR exists
+        Log.i("MAIN","Checking APP DIR: "+Benchmark.APP_DIR);
+        File root = new File(Benchmark.APP_DIR);
+        if (!root.exists()) 
+        {
+        	Log.i("MAIN","Creating Directories");
+            root.mkdirs(); 
+        }
+    }
     
     /**
      * Called when your activity's options menu needs to be created.
@@ -37,61 +64,54 @@ public class Benchmark extends Activity {
         // We are going to create two menus. Note that we assign them
         // unique integer IDs, labels from our string resources, and
         // given them shortcuts.
-        menu.add(0, PERST_ID, 0, R.string.perst);
-        menu.add(0, SQLITE_ID, 0, R.string.sqlite);
-        menu.add(0, DB4O_ID, 0, R.string.db4o);
         
-        //Make sure the path to APP_DIR exists
-        Log.i("MAIN","Checking APP DIR: "+Benchmark.APP_DIR);
-        File root = new File(Benchmark.APP_DIR);
-        if (!root.exists()) 
-        {
-        	Log.i("MAIN","Creating Directories");
-            if(!root.mkdirs()) return false; // fail if directory not created
-        }
-
+        menu.add(0, M_COUCH_ID, 0, R.string.couchlite);
+        menu.add(0, M_SQLITE_ID, 0, R.string.sqlite);
+        menu.add(0, M_DB4O_ID, 0, R.string.db4o);
+        menu.add(0, M_DB_ALL,0,R.string.dball);
+        menu.add(0, M_SETTINGS,0,R.string.settings);
+        
         return true;
     }
-
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        tv = new TextView(this);
-        tv.setText(R.string.about);
-        setContentView(tv);
-    }
+    
     /**
      * Called when a menu item is selected.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        DBTestInterface db = new SQLiteTest();
-       
-        ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
-        this.tv.setText(String.format("Starting %s test....\n",db.getName()));
-        new Thread(new TestHarness(db,queue)).start();
-        new Thread(new DisplayMonitor(queue,this.tv)).start();
-        
-        /*
-        PrintStream ps = new PrintStream(out);
-        Test test;
+    	
+        DBTestInterface db;
         switch (item.getItemId()) {
-        case PERST_ID:
-            test = new PerstTest(Benchmark.APP_DIR, ps);
+        case M_DB_ALL:
+        	Toast.makeText(getApplicationContext(),"all not implemented yet", Toast.LENGTH_SHORT).show();
+            return true;
+        case M_SQLITE_ID:
+        	db = new SQLiteTest();
             break;
-        case SQLITE_ID:
-            test = new SqlLiteTest(Benchmark.APP_DIR, ps);
-            break;
-        case DB4O_ID:
-            test = new Db4oTest(Benchmark.APP_DIR, ps);
-            break;
+        case M_DB4O_ID:
+        	Toast.makeText(getApplicationContext(),"db4o not implemented yet", Toast.LENGTH_SHORT).show();
+        	return false;
+        case M_COUCH_ID:
+        	Toast.makeText(getApplicationContext(),"Couch-Lite not implemented yet", Toast.LENGTH_SHORT).show();
+        	return false;
+        case M_SETTINGS:
+        	startActivity(new Intent(this,ShowSettingsActivity.class));
+        	return true;
         default:
             return super.onOptionsItemSelected(item);
         }
+
+
+        ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
+        this.tv.setText(String.format("Starting %s test....\n",db.getName()));
+        
+        TestHarness test = new TestHarness(db,queue);
+        //set test preferences
+        test.doCreate = this.sharedPrefs.getBoolean("create_tables", true);
+        
         new Thread(test).start();
-        new Thread(new ProgressMonitor(test, tv, out)).start();
-        */ 
+        new Thread(new DisplayMonitor(queue,this.tv)).start();
+        
         return true;
    }
 

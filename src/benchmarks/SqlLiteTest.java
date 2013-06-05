@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import android.database.sqlite.*;
 import android.database.*;
 
-public class SqlLiteTest extends Test {
+public class SqlLiteTest {
 	final static int nRecords = Benchmark.TEST_ITERATIONS;
 	final static int pagePoolSize = 2 * 1024 * 1024;
 	
@@ -106,7 +106,6 @@ public class SqlLiteTest extends Test {
 				+ (System.currentTimeMillis() - start) + " milliseconds");
 		db.close();
 		out.flush();
-		done();
 	}
 
 }
