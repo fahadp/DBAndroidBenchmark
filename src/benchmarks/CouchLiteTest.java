@@ -2,6 +2,7 @@ package benchmarks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import tools.PeopleRow;
 import tools.TransactionRow;
@@ -31,11 +32,23 @@ import com.couchbase.cblite.router.CBLURLStreamHandlerFactory;
 
 public class CouchLiteTest extends DBTestInterface {
 	
-	private final static String DB_NAME = "couch.db";
+	private final static String DB_NAME = "couch-test";
 	private final static String LTAG = "COUCH";
 	
+	//couch internals (these were static in GrocerySync)
 	private CBLServer server;
+	private HttpClient httpClient;
 
+	//ektorp impl
+	private CouchDbInstance dbInstance;
+	private CouchDbConnector couchDbConnector;
+	
+	//java.net.MalformedURLException: Unknown protocol: cblite
+	{
+	    CBLURLStreamHandlerFactory.registerSelfIgnoreError();
+	}
+	
+	
 	@Override
 	public boolean open() {
 		return this.open(CouchLiteTest.DB_NAME);
@@ -53,7 +66,7 @@ public class CouchLiteTest extends DBTestInterface {
 	}
 
 	@Override
-	public void create(String file) {
+	public void create(final String file) {
 		Log.i(LTAG,"Creating Datababses");
 		
 		//create server directory
@@ -69,9 +82,43 @@ public class CouchLiteTest extends DBTestInterface {
 		Log.i(LTAG,"Couch DB: "+db);
 		
 		//TODO: add views in here
+		CBLView view = db.getViewNamed(String.format("%s/%s", "_design/couch-local", "byDate"));
+	    view.setMapReduceBlocks(new CBLViewMapBlock() {
+
+            @Override
+            public void map(Map<String, Object> document, CBLViewMapEmitBlock emitter) {
+                Object createdAt = document.get("created_at");
+                if(createdAt != null) {
+                    emitter.emit(createdAt.toString(), document);
+                }
+
+            }
+        }, null, "1.0");
+		
+		
 		
 		//Start Ektorp
+		this.httpClient = new CBLiteHttpClient(this.server);
+		this.dbInstance = new StdCouchDbInstance(this.httpClient);
+		Log.w(LTAG,"DBInstance: "+dbInstance);
+		
+		CouchSyncEktorpAsyncTask startupTask = new CouchSyncEktorpAsyncTask() {
 
+			@Override
+			protected void doInBackground() {
+				Log.i(LTAG,"Do in background");
+				couchDbConnector = dbInstance.createConnector(file, true);
+			}
+			
+			protected void onSuccess() {
+				Log.i(LTAG,"Couch Startup");
+			}
+			
+		};
+		
+		//startupTask.execute();
+		
+		
 	}
 
 	@Override
@@ -148,8 +195,7 @@ public class CouchLiteTest extends DBTestInterface {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return CouchLiteTest.LTAG;
 	}
 
 }
