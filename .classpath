@@ -3,16 +3,16 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="lib/perst15.jar"/>
-	<classpathentry kind="lib" path="lib/db4o-8.0.146.14426-core-java5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/db4o-8.0.146.14426-core-java5.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry kind="lib" path="lib/couchbase-lite-android-ektorp.jar"/>
-	<classpathentry kind="lib" path="lib/couchbase-lite-android.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-asl-1.9.2.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.9.2.jar"/>
-	<classpathentry kind="lib" path="lib/org.ektorp-1.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/org.ektorp.android-1.2.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tperrier/Documents/Android-windows-x86_64/sdk/platforms/android-17/android.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry exported="true" kind="lib" path="lib/couchbase-lite-android-ektorp.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/couchbase-lite-android.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-core-asl-1.9.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-mapper-asl-1.9.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.ektorp-1.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.ektorp.android-1.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/tperrier/Documents/Android-windows-x86_64/sdk/platforms/android-17/android.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

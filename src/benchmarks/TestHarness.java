@@ -27,10 +27,11 @@ public class TestHarness implements Runnable {
 	public boolean doCreate = true;
 	public boolean[] doSelect = {false,true,true,true,true,true,true};
 	
+	public static int NUM_PEOPLE = 1000;
+	public static int NUM_TRANSACTIONS = NUM_PEOPLE*3;
+	
 	private final String LTAG = "HARNESS";
 	
-	public static final int NUM_PEOPLE = 1000;
-	public static final int NUM_TRANSACTIONS = NUM_PEOPLE*3;
 	public static final String DONE = "DONE";
 	
 	public TestHarness(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue ) {
