@@ -13,6 +13,9 @@ public class TransactionRow {
 	public final int seller;
 	public final String date;
 	
+	public PeopleRow buyer_object;
+	public PeopleRow seller_object;
+	
 	public static int transactions = 0;
 
 	
@@ -43,6 +46,13 @@ public class TransactionRow {
 	 */
 	public String[] bindArgs(){
 		return new String[] {Integer.valueOf(this.id).toString(),Integer.valueOf(this.seller).toString(),Integer.valueOf(this.buyer).toString(),Float.valueOf(this.price).toString(),this.item,this.date};
+	}
+	
+	public void setBuyerObject(PeopleRow buyer){
+		this.buyer_object=buyer;
+	}
+	public void setSellerObject(PeopleRow seller){
+		this.seller_object=seller;
 	}
 	
 }
