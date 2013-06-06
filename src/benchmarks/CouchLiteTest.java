@@ -8,6 +8,8 @@ import tools.PeopleRow;
 import tools.TransactionRow;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.ReplicationCommand;
@@ -75,13 +77,19 @@ public class CouchLiteTest extends DBTestInterface {
 		} catch (IOException e) {
 			Log.e(LTAG, "Error starting CBLServer", e);
 		}
-		
+		PeopleRow.people = 0;
 		//create db
 		CBLDatabase db = server.getDatabaseNamed(file);
+		Log.i(LTAG,"Created DB: "+db);
+		if(db.exists()) {
+			Log.i(LTAG,"Database exists...deleting");
+			db.deleteDatabase();
+		}
 		
-		Log.i(LTAG,"Couch DB: "+db);
+		
 		
 		//TODO: add views in here
+		/*
 		CBLView view = db.getViewNamed(String.format("%s/%s", "_design/couch-local", "byDate"));
 	    view.setMapReduceBlocks(new CBLViewMapBlock() {
 
@@ -93,30 +101,18 @@ public class CouchLiteTest extends DBTestInterface {
                 }
 
             }
-        }, null, "1.0");
+        }, null, "1.0");*/
 		
 		
 		
 		//Start Ektorp
 		this.httpClient = new CBLiteHttpClient(this.server);
 		this.dbInstance = new StdCouchDbInstance(this.httpClient);
-		Log.w(LTAG,"DBInstance: "+dbInstance);
+		Log.i(LTAG,"DBInstance: "+dbInstance);
 		
-		CouchSyncEktorpAsyncTask startupTask = new CouchSyncEktorpAsyncTask() {
 
-			@Override
-			protected void doInBackground() {
-				Log.i(LTAG,"Do in background");
-				couchDbConnector = dbInstance.createConnector(file, true);
-			}
-			
-			protected void onSuccess() {
-				Log.i(LTAG,"Couch Startup");
-			}
-			
-		};
-		
-		//startupTask.execute();
+		this.couchDbConnector = this.dbInstance.createConnector(file, true);
+
 		
 		
 	}
@@ -135,7 +131,15 @@ public class CouchLiteTest extends DBTestInterface {
 
 	@Override
 	public void insertPeopleRecord(PeopleRow row) {
-		// TODO Auto-generated method stub
+		ObjectNode item = JsonNodeFactory.instance.objectNode();
+		
+		item.put("_id",""+row.id);
+		item.put("name",row.name);
+		item.put("color",row.color);
+		item.put("age",""+row.age);
+		item.put("gender",row.gender);
+		
+		this.couchDbConnector.create(item);
 
 	}
 

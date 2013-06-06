@@ -5,6 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import android.util.Log;
 
+import tools.PeopleRow;
 import tools.TaskMessage;
 
 public class CouchLiteTester implements Runnable {
@@ -28,7 +29,17 @@ public class CouchLiteTester implements Runnable {
 		Log.i(LTAG,"Creating Databases....");
 		this.db.create();
 		
+		for(int i=0; i<10; i++){
+			PeopleRow p = new PeopleRow();
+			Log.i(LTAG,"Inserting: "+p);
+			this.db.insertPeopleRecord(p);
+		}
+		
+		
+		
 	}
+	
+	
 	
 	private void log(String task,String message) {
 		TaskMessage t = new TaskMessage(task,0,message);

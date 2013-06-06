@@ -31,6 +31,7 @@ public class Benchmark extends Activity {
     //SD Card storage location
     private static final String  SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String APP_DIR = SDCARD+"/Android/data/benchmakrs.cs/";
+	public static String LOCAL_APP_DIR;
     
     private TextView tv;
     private SharedPreferences sharedPrefs;
@@ -43,6 +44,8 @@ public class Benchmark extends Activity {
         tv.setText(R.string.about);
         setContentView(tv);
         this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Benchmark.LOCAL_APP_DIR = getFilesDir().getAbsolutePath();
+        
         
         //Make sure the path to APP_DIR exists
         Log.i("MAIN","Checking APP DIR: "+Benchmark.APP_DIR);
