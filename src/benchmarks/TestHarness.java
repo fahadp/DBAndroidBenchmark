@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import tools.FieldGenerator;
 import tools.TaskMessage;
@@ -22,26 +23,37 @@ public class TestHarness implements Runnable {
 	private long start = 0;
 	private long delta = 0;	
 	private BufferedWriter logbw;
+	private Thread waitFor;
 	
 	// config variablies to change 
 	public boolean doCreate = true;
 	public boolean[] doSelect = {false,true,true,true,true,true,true};
 	
-	public static int NUM_PEOPLE = 1000;
+	public static int NUM_PEOPLE = 5000;
 	public static int NUM_TRANSACTIONS = NUM_PEOPLE*3;
+	public static int QUERIES = 10;
 	
 	private final String LTAG = "HARNESS";
+	private TextView tv;
+	private DisplayMonitor dsp;
 	
 	public static final String DONE = "DONE";
 	
-	public TestHarness(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue ) {
+	public TestHarness(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue, TextView tv, DisplayMonitor dsp) {
+		this(db, queue,tv,dsp, null);
+	}
+	
+	public TestHarness(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue, TextView tv,DisplayMonitor dsp, Thread wait ) {
 		
 		this.db = db;
 		this.queue = queue;
+		this.waitFor = wait;
+		this.tv = tv;
+		this.dsp = dsp;
 		
 		try {
 			//TODO: get timestamp
-			File logFile = new File(String.format("%s%s_%s.txt",Benchmark.APP_DIR,db.getName(),FieldGenerator.DATETIME_FORMAT.format(new Date())));
+			File logFile = new File(String.format("%s%s_%s.txt",Benchmark.APP_DIR,this.db.getName(),FieldGenerator.DATETIME_FORMAT.format(new Date())));
 			if(!logFile.exists()) {
 				logFile.createNewFile();
 			}
@@ -54,6 +66,15 @@ public class TestHarness implements Runnable {
 	@Override
 	public void run() {
 		
+		//Wait for other thread
+		 if (!(this.waitFor == null))
+ 	        try { this.waitFor.join(); }
+ 	        catch(InterruptedException ie) { }
+		
+		 //start the Display Monitor for this run
+		
+		new Thread(this.dsp).start();
+		 
 		if(this.doCreate) {// toggle create/insert 
 			this.create();
 			this.insert();
@@ -65,9 +86,9 @@ public class TestHarness implements Runnable {
 		for(int i=1; i<this.doSelect.length; i++) 
 			if(this.doSelect[i])
 				this.select(i);
-		//DONE
-		this.delta = 0;
+
 		this.log(TestHarness.DONE,"Finished");
+		
 		try {
 			this.logbw.close();
 		} catch (IOException e) {
@@ -81,11 +102,11 @@ public class TestHarness implements Runnable {
 	 * /Create the database
 	 */
 	private void create() {
-		Log.i(LTAG,"Creating Databases....");
+		//Log.i(LTAG,"Creating Databases....");
 		this.startTimer();
 		this.db.create();
 		this.endTimer();
-		this.log("Create","Created databases");
+		this.log("Create","Created databases "+this.db.getName());
 	}
 	
 	/**
@@ -105,7 +126,7 @@ public class TestHarness implements Runnable {
 		case 2: this.select2(); break;
 		case 3: this.select3(); break;
 		case 4: this.select4(); break;
-		case 5: this.select5(); break;
+		//case 5: this.select5(); break;
 		case 6: this.select6(); break;
 		default:break;
 		}
@@ -118,11 +139,11 @@ public class TestHarness implements Runnable {
 	private void select1() {
 		Log.i(LTAG,"Select 1....");
 		this.startTimer();
-		for(int i=0; i<TestHarness.NUM_PEOPLE; i++) {
+		for(int i=0; i<TestHarness.QUERIES; i++) {
 			this.db.selectTest1(i);
 		}
 		this.endTimer();
-		this.log("Select Test 1",String.format("Selected %d records by primary key. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 1",String.format("Selected %d records by primary key. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 		
 	}
 	
@@ -134,12 +155,12 @@ public class TestHarness implements Runnable {
 	private void select2() {
 		Log.i(LTAG,"Select 2....");
 		this.startTimer();
-		for(int i=0; i<TestHarness.NUM_PEOPLE; i++) {
+		for(int i=0; i<TestHarness.QUERIES; i++) {
 			int c = this.db.selectTest2(FieldGenerator.randomName());
 			//Log.i(LTAG,String.format("Select 2: return %d rows",c));
 		}
 		this.endTimer();
-		this.log("Select Test 2",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 2",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 	}
 	
 	/**
@@ -149,13 +170,13 @@ public class TestHarness implements Runnable {
 	private void select3() {
 		Log.i(LTAG,"Select 3....");
 		this.startTimer();
-		for(int i=0; i<TestHarness.NUM_PEOPLE; i++) {
+		for(int i=0; i<TestHarness.QUERIES; i++) {
 			int age = FieldGenerator.randomAge();
 			int c = this.db.selectTest3(age,age+10);
 			//Log.i(LTAG,String.format("Select 3: return %d rows",c));
 		}
 		this.endTimer();
-		this.log("Select Test 3",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 3",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 	}
 	
 	/**
@@ -165,11 +186,11 @@ public class TestHarness implements Runnable {
 	private void select4() {
 		Log.i(LTAG,"Select 4....");
 		this.startTimer();
-		for(int i=0; i<TestHarness.NUM_PEOPLE; i++) {
+		for(int i=0; i<TestHarness.QUERIES; i++) {
 			int c = this.db.selectTest4();
 		}
 		this.endTimer();
-		this.log("Select Test 4",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 4",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 	}
 	
 	
@@ -184,7 +205,7 @@ public class TestHarness implements Runnable {
 			int c = this.db.selectTest5();
 		}
 		this.endTimer();
-		this.log("Select Test 5",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 5",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 	}
 	
 	/**
@@ -194,11 +215,11 @@ public class TestHarness implements Runnable {
 	private void select6() {
 		Log.i(LTAG,"Select 6....");
 		this.startTimer();
-		for(int i=0; i<TestHarness.NUM_PEOPLE; i++) {
+		for(int i=0; i<TestHarness.QUERIES; i++) {
 			int c = this.db.selectTest6(FieldGenerator.randomAge());
 		}
 		this.endTimer();
-		this.log("Select Test 6",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.NUM_PEOPLE,(float)this.delta/TestHarness.NUM_PEOPLE));
+		this.log("Select Test 6",String.format("Selected %d records by non-indexed field. Average %f",TestHarness.QUERIES,(float)this.delta/TestHarness.QUERIES));
 	}
 	
 	private void startTimer() {

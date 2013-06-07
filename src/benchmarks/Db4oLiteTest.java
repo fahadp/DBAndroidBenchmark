@@ -69,7 +69,9 @@ public class Db4oLiteTest extends DBTestInterface {
         new File(Benchmark.APP_DIR+this.DB_NAME).delete();
         oc = Db4oEmbedded.openFile(config, Benchmark.APP_DIR+this.DB_NAME);
 		
-
+        PeopleRow.people = 0;
+		TransactionRow.transactions = 0;
+        
 	}
 	
 	@Override
@@ -89,7 +91,7 @@ public class Db4oLiteTest extends DBTestInterface {
 		//this.db.execSQL(this.statements.get(ST.INSERT_PEOPLE),row.bindArgs());
 		oc.store(row);
 		oc.commit();
-		Log.i("DB4O","Insert Person: "+row);
+		//Log.i("DB4O","Insert Person: "+row);
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class Db4oLiteTest extends DBTestInterface {
 		row.setSellerObject(getPeopleRecordById(row.seller));
 		oc.store(row);
 		oc.commit();
-		Log.i("DB4O","Insert Transaction: "+row);
+		//Log.i("DB4O","Insert Transaction: "+row);
 	}
 
 	@Override
@@ -272,10 +274,8 @@ public class Db4oLiteTest extends DBTestInterface {
 	}
 
 	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		
-		return null;
+	public String getName() {		
+		return Db4oLiteTest.LTAG;
 	}
 
 }

@@ -59,18 +59,21 @@ public class SQLiteTest extends DBTestInterface {
 
 	@Override
 	public void create(String file) {
-		Log.i(LTAG,"Creating SQLite DB");
+		//Log.i(LTAG,"Creating SQLite DB");
 		File dbfile = new File(Benchmark.APP_DIR+file);
 		if(dbfile.exists()) {
-			Log.i(LTAG,"File Exists Deleting: "+dbfile.delete());
+			dbfile.delete();
 		}
 		
 		this.db = SQLiteDatabase.openOrCreateDatabase(dbfile, null);
 		
 		//Create tables: People and Transaction Tabels
-		Log.i(LTAG,"Creating Tables...");
+		//Log.i(LTAG,"Creating Tables...");
 		this.db.execSQL("create table people (id integer primary key, name text, age integer,  gender text, color text)");
 		this.db.execSQL("create table transactions (id integer primary key, seller integer, buyer integer, price real, item text,  date text)");
+		
+		PeopleRow.people = 0;
+		TransactionRow.transactions = 0;
 		
 	}
 	
@@ -89,7 +92,7 @@ public class SQLiteTest extends DBTestInterface {
 	@Override
 	public void insertPeopleRecord(PeopleRow row) {
 		this.db.execSQL(this.statements.get(ST.INSERT_PEOPLE),row.bindArgs());
-		//Log.i("SQLITE","Insert Person: "+row);
+		Log.i("SQLITE","Insert Person: "+row);
 	}
 
 	@Override

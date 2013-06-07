@@ -24,6 +24,12 @@ public class DisplayMonitor implements Runnable  {
 	@Override
 	public void run() {
 		
+		this.handler.post(new Runnable() {
+			public void run() {
+				view.setText("");
+			}
+		});
+		
 		TaskMessage m = null;
 		do {
 			try {

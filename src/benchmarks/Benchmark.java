@@ -83,10 +83,27 @@ public class Benchmark extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	
+    	
+    	
         DBTestInterface db;
         switch (item.getItemId()) {
         case M_DB_ALL:
-        	Toast.makeText(getApplicationContext(),"all not implemented yet", Toast.LENGTH_SHORT).show();
+        	//run all tests in order
+        	this.tv.setText("Starting all tests");
+        	SQLiteTest s = new SQLiteTest();
+        	Db4oLiteTest d = new Db4oLiteTest();
+        	CouchLiteTest c = new CouchLiteTest();
+        	
+        	ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
+            DisplayMonitor dsp = new DisplayMonitor(queue,this.tv);
+            Thread t1 = new Thread( new TestHarness(s,queue,this.tv,dsp));
+            Thread t2 = new Thread( new TestHarness(d,queue,this.tv,dsp,t1));
+            Thread t3 = new Thread( new TestHarness(c,queue,this.tv,dsp,t2));
+            
+            t1.start();
+            t2.start();
+            t3.start();
+            
             return true;
         case M_SQLITE_ID:
         	db = new SQLiteTest();
@@ -106,14 +123,12 @@ public class Benchmark extends Activity {
 
 
         ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
-        this.tv.setText(String.format("Starting %s test....\n",db.getName()));
-        
-        TestHarness test = new TestHarness(db,queue);
+        DisplayMonitor dsp = new DisplayMonitor(queue,this.tv);
+        TestHarness test = new TestHarness(db,queue,this.tv,dsp);
         //set test preferences
         test.doCreate = this.sharedPrefs.getBoolean("create_tables", true);
         
         new Thread(test).start();
-        new Thread(new DisplayMonitor(queue,this.tv)).start();
         
         return true;
    }

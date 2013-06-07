@@ -79,19 +79,19 @@ public class CouchLiteTest extends DBTestInterface {
 
 	@Override
 	public boolean open(String file) {
-		Log.i(LTAG,"Opening Datababses");
+		//Log.i(LTAG,"Opening Datababses");
 		
 		//create server directory
 		try {
 			this.server = new CBLServer(Benchmark.APP_DIR);
 		} catch (IOException e) {
-			Log.e(LTAG, "Error starting CBLServer", e);
+			//Log.e(LTAG, "Error starting CBLServer", e);
 		}
 		
 		//create db
 		this.db = server.getDatabaseNamed(file);
 		if(!db.exists()) {
-			Log.i(LTAG,"Database does not exist");
+			//Log.i(LTAG,"Database does not exist");
 			return false;
 		}
 		
@@ -101,7 +101,7 @@ public class CouchLiteTest extends DBTestInterface {
 		//Start Ektorp
 				this.httpClient = new CBLiteHttpClient(this.server);
 				this.dbInstance = new StdCouchDbInstance(this.httpClient);
-				Log.i(LTAG,"DBInstance: "+dbInstance);
+				//Log.i(LTAG,"DBInstance: "+dbInstance);
 				
 
 				this.couchDbConnector = this.dbInstance.createConnector(file, true);
@@ -118,20 +118,20 @@ public class CouchLiteTest extends DBTestInterface {
 
 	@Override
 	public void create(final String file) {
-		Log.i(LTAG,"Creating Datababses");
+		//Log.i(LTAG,"Creating Datababses");
 		
 		//create server directory
 		try {
 			this.server = new CBLServer(Benchmark.APP_DIR);
 		} catch (IOException e) {
-			Log.e(LTAG, "Error starting CBLServer", e);
+			//Log.e(LTAG, "Error starting CBLServer", e);
 		}
-		PeopleRow.people = 0;
+		
 		//create db
 		this.db = server.getDatabaseNamed(file);
-		Log.i(LTAG,"Created DB: "+db);
+		//Log.i(LTAG,"Created DB: "+db);
 		if(db.exists()) {
-			Log.i(LTAG,"Database exists...deleting");
+			//Log.i(LTAG,"Database exists...deleting");
 			db.deleteDatabase();
 		}
 		
@@ -143,16 +143,17 @@ public class CouchLiteTest extends DBTestInterface {
 		//Start Ektorp
 		this.httpClient = new CBLiteHttpClient(this.server);
 		this.dbInstance = new StdCouchDbInstance(this.httpClient);
-		Log.i(LTAG,"DBInstance: "+dbInstance);
+		//Log.i(LTAG,"DBInstance: "+dbInstance);
 		
 
 		this.couchDbConnector = this.dbInstance.createConnector(file, true);
-		
+		PeopleRow.people = 0;
+		TransactionRow.transactions = 0;
 		
 	}
 	
 	private void makeViews() {
-		Log.i(LTAG,"Creating Views");
+		//Log.i(LTAG,"Creating Views");
 		//Name View
 		CBLView view = this.db.getViewNamed(String.format("%s/%s",DOC_NAME,CouchLiteTest.viewNames.get("byName")));
 		view.setMapReduceBlocks(new CBLViewMapBlock() {
@@ -197,7 +198,7 @@ public class CouchLiteTest extends DBTestInterface {
 
 			@Override
 			public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
-				Log.i(LTAG,"Reduce: "+keys.size());
+				//Log.i(LTAG,"Reduce: "+keys.size());
 				return values.size();
 			}
 			
@@ -219,7 +220,7 @@ public class CouchLiteTest extends DBTestInterface {
 
 				@Override
 				public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
-					Log.i(LTAG,"Reduce: "+keys.size()+" "+keys.get(0));
+					//Log.i(LTAG,"Reduce: "+keys.size()+" "+keys.get(0));
 					float sum = 0;
 					for(Object v: values){
 						sum += Float.valueOf((String)v);
@@ -248,7 +249,7 @@ public class CouchLiteTest extends DBTestInterface {
 	
 					@Override
 					public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
-						Log.i(LTAG,"Reduce: "+keys.size()+" "+keys.get(0)+" "+values.get(0));
+						//Log.i(LTAG,"Reduce: "+keys.size()+" "+keys.get(0)+" "+values.get(0));
 						ArrayList<String> p = (ArrayList<String>) values.get(0);
 						ArrayList<ObjectNode> l = new ArrayList<ObjectNode>();
 						for(int i=1; i<values.size(); i++){
@@ -288,7 +289,7 @@ public class CouchLiteTest extends DBTestInterface {
 		item.put("gender",row.gender);
 		
 		this.couchDbConnector.create(item);
-		Log.i(LTAG,String.format("Insert Person %d",row.id));
+		//Log.i(LTAG,String.format("Insert Person %d",row.id));
 	}
 
 	@Override
@@ -321,7 +322,7 @@ public class CouchLiteTest extends DBTestInterface {
 	@Override
 	public int selectTest1(int id) {
 		JsonNode n = this.couchDbConnector.find(JsonNode.class, "p_"+id);
-		Log.i(LTAG,"Found: "+n.toString());
+		//Log.i(LTAG,"Found: "+n.toString());
 		return 1;
 	}
 
@@ -329,7 +330,7 @@ public class CouchLiteTest extends DBTestInterface {
 	public int selectTest2(String name) {
 		ViewQuery vq = new ViewQuery().designDocId(DOC_ID).viewName(viewNames.get("byName")).key(name);
 		ViewResult vr = this.couchDbConnector.queryView(vq);
-		Log.i(LTAG,"Select 2: "+vr.getSize());
+		//Log.i(LTAG,"Select 2: "+vr.getSize());
 		return vr.getSize();
 	}
 
@@ -337,7 +338,7 @@ public class CouchLiteTest extends DBTestInterface {
 	public int selectTest3(int startAge, int endAge) {
 		ViewQuery vq = new ViewQuery().designDocId(DOC_ID).viewName(viewNames.get("byAge")).startKey(""+startAge).endKey(""+endAge);
 		ViewResult vr = this.couchDbConnector.queryView(vq);
-		Log.i(LTAG,"Select 3: "+vr.getSize());
+		//Log.i(LTAG,"Select 3: "+vr.getSize());
 		return vr.getSize();
 	}
 
@@ -368,9 +369,9 @@ public class CouchLiteTest extends DBTestInterface {
 				continue; // no join data
 			}
 			int tmp_age = row.getValueAsNode().get(0).get("age").asInt(-1);
-			//Log.i(LTAG,"Age: "+tmp_age);
+			////Log.i(LTAG,"Age: "+tmp_age);
 			if(tmp_age <= age){
-				Log.i(LTAG,"Age Match: "+tmp_age);
+				//Log.i(LTAG,"Age Match: "+tmp_age);
 				JsonNode js = row.getValueAsNode();
 				node.add(js);
 			}
@@ -389,7 +390,7 @@ public class CouchLiteTest extends DBTestInterface {
 	
 	private void logResult(ViewResult r){
 		for(Row row: r.getRows()){
-			Log.d(LTAG,String.format("ResultRow: %s -> %s",row.getKey(),row.getValue()));
+			//Log.d(LTAG,String.format("ResultRow: %s -> %s",row.getKey(),row.getValue()));
 		}
 	}
 

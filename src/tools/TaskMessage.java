@@ -13,6 +13,6 @@ public class TaskMessage {
 	}
 	
 	public String toString() {
-		return String.format("Task: %s -- %s\n  %s",this.task,this.time,this.message);
+		return String.format("Task: %s -- %s (%s)\n  %s",this.task,this.time,this.message,this.time/60.0);
 	}
 }
