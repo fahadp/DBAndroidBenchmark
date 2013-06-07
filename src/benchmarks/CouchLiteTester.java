@@ -1,52 +1,77 @@
 package benchmarks;
 
-import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-
-import android.util.Log;
-
 import tools.PeopleRow;
-import tools.TaskMessage;
+import tools.TransactionRow;
+import edu.cs.washington.R;
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
-public class CouchLiteTester implements Runnable {
+
+public class CouchLiteTester extends Activity {
+
+	public static final String LTAG = "TESTER";
 	
-	private DBTestInterface db;
-	private ArrayBlockingQueue<TaskMessage> queue;
+	private CouchLiteTest db;
+	private TextView tv;
 	
-	private final String LTAG = "COUCHTEST";
-	
-	public CouchLiteTester(DBTestInterface db, ArrayBlockingQueue<TaskMessage> queue ) {
-		
-		this.db = db;
-		this.queue = queue;
-		
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.db_tester);
+	    
+	    this.tv = (TextView) findViewById(R.id.db_tester_text);
+	    
+	    this.db = new CouchLiteTest();
+
+	    // TODO Auto-generated method stub
 	}
 	
-	
-	@Override
-	public void run() {
-		
-		Log.i(LTAG,"Creating Databases....");
+	public void create(View view) {
+		this.log("Creating Couch-lite");
 		this.db.create();
 		
-		for(int i=0; i<10; i++){
-			PeopleRow p = new PeopleRow();
-			Log.i(LTAG,"Inserting: "+p);
-			this.db.insertPeopleRecord(p);
+	}
+	
+	public void insert10(View view) {
+		this.log("Insert 10");
+		for(int i=0; i<10; i++) {
+			this.db.insertPeopleRecord(new PeopleRow());
 		}
-		
-		
+		for(int i=0; i<40; i++){
+			this.db.insertTransactionRecord(new TransactionRow());
+		}
+	}
+	
+	public  void getCount(View view){
+		this.log("Count: "+this.db.count());
+	}
+	
+	public void opendb(View view){
+		this.log("Opening Couch");
+		this.db.open();
+	}
+	
+	public void select10(View view){
+		this.log("Selecting");
+		for(int i=0; i<10; i++){
+			this.db.selectTest1(i);
+		}
+	}
+	
+	public void select2(View view) {
+		this.log("Select 6: "+this.db.selectTest6(35));
 		
 	}
 	
-	
-	
-	private void log(String task,String message) {
-		TaskMessage t = new TaskMessage(task,0,message);
-		try {
-			this.queue.put(t);
-		} 
-		catch(InterruptedException e) {} 
+	private void log(String s) {
+		Log.i(LTAG,s);
+		this.tv.append(s+"\n");
 	}
+	
+	
 
 }

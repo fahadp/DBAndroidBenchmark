@@ -95,13 +95,8 @@ public class Benchmark extends Activity {
         	Toast.makeText(getApplicationContext(),"db4o not implemented yet", Toast.LENGTH_SHORT).show();
         	return false;
         case M_COUCH_ID:
-        	 db = new CouchLiteTest();
-        	 ArrayBlockingQueue<TaskMessage> queue = new  ArrayBlockingQueue<TaskMessage>(25);
-             this.tv.setText(String.format("Starting %s test....\n",db.getName()));
-             CouchLiteTester test = new CouchLiteTester(db,queue);
-             new Thread(test).start();
-             new Thread(new DisplayMonitor(queue,this.tv)).start();
-        	return false;
+        	db = new CouchLiteTest();
+        	break;
         case M_SETTINGS:
         	startActivity(new Intent(this,ShowSettingsActivity.class));
         	return true;

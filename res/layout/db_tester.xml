@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/Create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="18dp"
+        android:onClick="create"
+        android:text="Create" />
+
+    <Button
+        android:id="@+id/Insert10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/Create"
+        android:layout_alignBottom="@+id/Create"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/Create"
+        android:onClick="insert10"
+        android:text="Insert 10" />
+
+    <Button
+        android:id="@+id/Select10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/Insert10"
+        android:layout_alignBottom="@+id/Insert10"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/Insert10"
+        android:onClick="select10"
+        android:text="Select 10" />
+
+    <Button
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Create"
+        android:layout_below="@+id/Create"
+        android:layout_marginTop="20dp"
+        android:onClick="getCount"
+        android:text="Count" />
+
+    <Button
+        android:id="@+id/open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/count"
+        android:layout_alignBottom="@+id/count"
+        android:layout_alignRight="@+id/Insert10"
+        android:onClick="opendb"
+        android:text="Open" />
+
+    <Button
+        android:id="@+id/select2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/open"
+        android:layout_alignBottom="@+id/open"
+        android:layout_alignLeft="@+id/Select10"
+        android:onClick="select2"
+        android:text="Select 2" />
+
+    <TextView
+        android:id="@+id/db_tester_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/open"
+        android:layout_below="@+id/open"
+        android:layout_marginTop="14dp"
+        android:text="TextView Log" />
+
+</RelativeLayout>

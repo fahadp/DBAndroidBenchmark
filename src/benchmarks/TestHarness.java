@@ -62,7 +62,7 @@ public class TestHarness implements Runnable {
 			this.db.open();
 		
 		//run select tests 1-6
-		for(int i=1; i<=6; i++) 
+		for(int i=1; i<this.doSelect.length; i++) 
 			if(this.doSelect[i])
 				this.select(i);
 		//DONE
@@ -107,6 +107,7 @@ public class TestHarness implements Runnable {
 		case 4: this.select4(); break;
 		case 5: this.select5(); break;
 		case 6: this.select6(); break;
+		default:break;
 		}
 	}
 	
