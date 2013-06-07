@@ -92,8 +92,8 @@ public class Benchmark extends Activity {
         	db = new SQLiteTest();
             break;
         case M_DB4O_ID:
-        	Toast.makeText(getApplicationContext(),"db4o not implemented yet", Toast.LENGTH_SHORT).show();
-        	return false;
+        	db = new Db4oLiteTest();
+        	break;
         case M_COUCH_ID:
         	db = new CouchLiteTest();
         	break;
