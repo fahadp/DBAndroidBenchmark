@@ -43,6 +43,11 @@ public class Db4oLiteTest extends DBTestInterface {
 	
 	private final static String LTAG = "DB4O";
 	
+	public Db4oLiteTest() {
+		//Create SQL statments
+		Log.i(LTAG,"Creating SQL Statments.....");
+	}
+	
 	@Override
 	public void create() {
 		this.create(Db4oLiteTest.DB_NAME);
@@ -61,6 +66,7 @@ public class Db4oLiteTest extends DBTestInterface {
         //config.common().bTreeNodeSize(6400);
         
         //Open database
+        new File(Benchmark.APP_DIR+this.DB_NAME).delete();
         oc = Db4oEmbedded.openFile(config, Benchmark.APP_DIR+this.DB_NAME);
 		
 
@@ -116,49 +122,45 @@ public class Db4oLiteTest extends DBTestInterface {
 	/** select * from people where id=? **/
 	public int selectTest1(int id) {
 		//Cursor c = this.db.rawQuery(this.statements.get(ST.TEST1),new String[]{Integer.valueOf(id).toString()});
-		ObjectSet<PeopleRow> result = getPeopleRecordByInt(new String[]{"id"},new int[]{id});
-		return result.size();
+		Query query = oc.query();
+    	query.constrain(PeopleRow.class);
+    	query.descend("id").constrain(id);
+    	ObjectSet<PeopleRow> result = query.execute();
+    	return result.size();
 	}
 
 	@Override
 	/** select * from people where name='?' **/
 	public int selectTest2(String name) {
-		//Cursor c = this.db.rawQuery(this.statements.get(ST.TEST2),new String[]{name});
-		ObjectSet<PeopleRow> result = getPeopleRecordByString(new String[]{"name"},new String[]{name});
-		return result.size();
+		Query query = oc.query();
+    	query.constrain(PeopleRow.class);
+    	query.descend("name").constrain(name);
+    	return query.execute().size();
 	}
 
 	@Override
 	/** select * from people where ?<age and age<? **/
 	public int selectTest3(int startAge,int endAge) {
-		final int s=startAge;
-		final int e=endAge;
-		ObjectSet<PeopleRow> result =oc.query(new Predicate<PeopleRow>() {
-		    public boolean match(PeopleRow row) {
-		        return row.age>s && row.age<e;
-		    }
-		});
-		//Cursor c = this.db.rawQuery(this.statements.get(ST.TEST3),new String[]{Integer.valueOf(startAge).toString(),Integer.valueOf(endAge).toString()});
-		//ObjectSet<PeopleRow> result = getPeopleRecordByInt(new String[]{"id"},new int[]{id});
-		return result.size();
+		Query q=oc.query();
+		q.constrain(PeopleRow.class);
+		Query cq=q.descend("age");
+		q.descend("age").constrain(startAge).greater().and(cq.constrain(endAge).smaller());
+		return q.execute().size();
 	}
 
 	@Override
 	/** select age, count(*) from people group by age **/
 	public int selectTest4() {
-		Hashtable4 hash=new Hashtable4();
-		ObjectSet<PeopleRow> result =oc.query(new Predicate<PeopleRow>() {
-		    public boolean match(PeopleRow row) {
-		        return true;
-		    }
-		});
+		Hashtable hash=new Hashtable();
+		
+		ObjectSet<PeopleRow> result =oc.queryByExample(PeopleRow.class);
 		PeopleRow row=null;
 		while(result.hasNext()){
 			row=result.next();
-			if(hash.containsKey(row.age)){
-				hash.put(row.age, new Integer(((Integer)hash.get(row.age))+1));
+			if(hash.containsKey(Integer.valueOf(row.age))){
+				hash.put(Integer.valueOf(row.age), Integer.valueOf(((Integer)hash.get(Integer.valueOf(row.age)))+1));
 			}else{
-				hash.put(row.age, new Integer(1));
+				hash.put(Integer.valueOf(row.age), Integer.valueOf(1));
 			}
 		}
 		//Cursor c = this.db.rawQuery(this.statements.get(ST.TEST4),null);
@@ -168,19 +170,15 @@ public class Db4oLiteTest extends DBTestInterface {
 	@Override
 	/** select buyer, sum(price) from transactions group by buyer **/
 	public int selectTest5() {
-		Hashtable4 hash=new Hashtable4();
-		ObjectSet<TransactionRow> result =oc.query(new Predicate<TransactionRow>() {
-		    public boolean match(TransactionRow row) {
-		        return true;
-		    }
-		});
+		Hashtable hash=new Hashtable();
+		ObjectSet<TransactionRow> result =oc.queryByExample(TransactionRow.class);
 		TransactionRow row=null;
 		while(result.hasNext()){
 			row=result.next();
-			if(hash.containsKey(row.buyer)){
-				hash.put(row.buyer, new Float(((Float)hash.get(row.buyer))+row.price));
+			if(hash.containsKey(Integer.valueOf(row.buyer))){
+				hash.put(Integer.valueOf(row.buyer), Float.valueOf(((Float)hash.get(Integer.valueOf(row.buyer)))+row.price));
 			}else{
-				hash.put(row.buyer, new Float(row.price));
+				hash.put(Integer.valueOf(row.buyer), Float.valueOf(row.price));
 			}
 		}
 		//Cursor c = this.db.rawQuery(this.statements.get(ST.TEST4),null);
@@ -249,5 +247,35 @@ public class Db4oLiteTest extends DBTestInterface {
     		query.descend(fieldName[i]).constrain(fieldValue[i]);
     	return query.execute();
     }
+
+	@Override
+	public boolean open() {
+		// TODO Auto-generated method stub
+		return this.open(Db4oLiteTest.DB_NAME);
+	}
+
+	@Override
+	public boolean open(String file) {
+		// TODO Auto-generated method stub
+		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+        config.common().objectClass(PeopleRow.class).objectField("id").indexed(true);
+        config.common().objectClass(TransactionRow.class).objectField("id").indexed(true);
+        config.file().lockDatabaseFile(false);
+        //config.idSystem().useInMemorySystem();
+        config.idSystem().usePointerBasedSystem();
+        //config.idSystem().useSingleBTreeSystem();
+        //config.common().bTreeNodeSize(6400);
+        
+        //Open database
+        oc = Db4oEmbedded.openFile(config, Benchmark.APP_DIR+this.DB_NAME);
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
 
 }
